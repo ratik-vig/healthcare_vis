@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prevalence Chart</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+</head>
+<body>
+    <div id="container" style="width:100%; height:400px;"></div>
+    <div id="container2" style="width:100%; height:400px;"></div>
+    <div id="container3" style="width:100%; height:400px;"></div>
+    <div id="container4" style="width:100%; height:400px;"></div>
+    <div id="container5" style="width:100%; height:400px;"></div>
+    <div id="container7" style="width:100%; height:400px;"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = {{ data[0]|tojson }};
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Diabetes Prevalence by General Health and Age Group'
+                },
+                xAxis: {
+                    categories: data.map(item => `${item.GENHLTH} - ${item._AGEG5YR}`)
+                },
+                yAxis: {
+                    title: {
+                        text: 'Diabetes Prevalence (%)'
+                    }
+                },
+                series: [{
+                    name: 'Prevalence',
+                    data: data.map(item => item.diabetes_prevalence)
+                }]
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const data = {{ data[3]|tojson }};
+        const series = [
+                    {
+                        name: 'No Diabetes',
+                        data: [],
+                        stack: 'male'
+                    },
+                    {
+                        name: 'Diabetes',
+                        data: [],
+                        stack: 'male'
+                    },
+                    {
+                        name: 'No Diabetes',
+                        data: [],
+                        stack: 'female'
+                    },
+                    {
+                        name: 'Diabetes',
+                        data: [],
+                        stack: 'female'
+                    }
+                ];
+
+                data.forEach(item => {
+                    const index = 2 * item.HeavyDrinker + item.DiabetesStatus;
+                    series[index].data.push({
+                        name: `Smoked: ${item.Smoked}, HeavyDrinker: ${item.HeavyDrinker}`,
+                        y: item.percentage
+                    });
+                });
+
+                Highcharts.chart('container4', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Diabetes Status Based on Smoking and Heavy Drinking'
+                    },
+                    xAxis: {
+                        type: 'category'
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Percentage'
+                        },
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                                fontWeight: 'bold',
+                                color: (Highcharts.defaultOptions.legend.backgroundColor || 'white')
+                            }
+                        }
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{point.x}</b><br/>',
+                        pointFormat: '{series.name}: {point.y}%<br/>Total: {point.stackTotal}%'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true,
+                                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                            }
+                        }
+                    },
+                    series: series
+                });
+            });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const data = {{ data[4]|tojson }};
+        const series = [
+                    {
+                        name: 'No Diabetes',
+                        data: [],
+                        stack: 'male'
+                    },
+                    {
+                        name: 'Diabetes',
+                        data: [],
+                        stack: 'male'
+                    },
+                    {
+                        name: 'No Diabetes',
+                        data: [],
+                        stack: 'female'
+                    },
+                    {
+                        name: 'Diabetes',
+                        data: [],
+                        stack: 'female'
+                    }
+                ];
+
+                data.forEach(item => {
+                    const index = 2 * item.StrokeHistory + item.DiabetesStatus;
+                    series[index].data.push({
+                        name: `CHD: ${item.CoronaryHeartDisease}, Stroke: ${item.StrokeHistory}`,
+                        y: item.Percentage
+                    });
+                });
+
+                Highcharts.chart('container5', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Effect of coronary heart disease and MI on diabetes'
+                    },
+                    xAxis: {
+                        type: 'category'
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Percentage'
+                        },
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                                fontWeight: 'bold',
+                                color: (Highcharts.defaultOptions.legend.backgroundColor || 'white')
+                            }
+                        }
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{point.x}</b><br/>',
+                        pointFormat: '{series.name}: {point.y}%<br/>Total: {point.stackTotal}%'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true,
+                                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                            }
+                        }
+                    },
+                    series: series
+                });
+            });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // fetch('/data')
+        // .then(response => response.json())
+        // .then(data => {
+        //     const categories = ['No Diabetes - Female', 'No Diabetes - Male', 'Diabetes - Female', 'Diabetes - Male'];
+        //     const bmiValues = data.map(item => item.avg_bmi);
+            const data2 = {{ data[1]|tojson }};
+            console.log(data2)
+            Highcharts.chart('container2', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Average BMI by Diabetes Status and Sex'
+                },
+                xAxis: {
+                    categories: data2.map(item => `${item.SEX === 0 ? 'Female' : 'Male' } - ${item.DIABETE3 === 0 ? 'Non diabetic' : 'Diabetic' }`),
+                    title: {
+                        text: 'Group'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Average BMI'
+                    }
+                },
+                series: [{
+                    name: 'BMI',
+                    data: data2.map(item => item.avg_bmi/100)
+                }]
+            });
+       });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // fetch('/data')
+        // .then(response => response.json())
+        // .then(data => {
+            // const seriesData = [{
+            //     name: 'Male No Diabetes',
+            //     data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 0).map(item => item.percentage)
+            // }, {
+            //     name: 'Female No Diabetes',
+            //     data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 0).map(item => item.percentage)
+            // }, {
+            //     name: 'Male Diabetes',
+            //     data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 1).map(item => item.percentage)
+            // }, {
+            //     name: 'Female Diabetes',
+            //     data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 1).map(item => item.percentage)
+            // }];
+            const data = {{ data[2]|tojson }};
+
+            const seriesData = [{
+                name: 'Male No Diabetes',
+                data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 0).map(item => item.percentage)
+            }, {
+                name: 'Female No Diabetes',
+                data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 0).map(item => item.percentage)
+            }, {
+                name: 'Male Diabetes',
+                data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 1).map(item => item.percentage)
+            }, {
+                name: 'Female Diabetes',
+                data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 1).map(item => item.percentage)
+            }];
+            Highcharts.chart('container3', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Percentage of Individuals by Cholesterol Level, Diabetes Status, and Sex'
+                    },
+                    xAxis: {
+                        categories: ['No Cholesterol Problem', 'Cholesterol Problem'],
+                        title: {
+                            text: 'Cholesterol Status'
+                        }
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Percentage (%)'
+                        },
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                                fontWeight: 'bold',
+                                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                            }
+                        }
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{point.x}</b><br/>',
+                        pointFormat: '{series.name}: {point.y}%<br/>Total: {point.stackTotal}%'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    series: seriesData
+                });
+        });
+    //});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // fetch('/data')
+        // .then(response => response.json())
+        // .then(data => {
+            // const seriesData = [{
+            //     name: 'Male No Diabetes',
+            //     data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 0).map(item => item.percentage)
+            // }, {
+            //     name: 'Female No Diabetes',
+            //     data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 0).map(item => item.percentage)
+            // }, {
+            //     name: 'Male Diabetes',
+            //     data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 1).map(item => item.percentage)
+            // }, {
+            //     name: 'Female Diabetes',
+            //     data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 1).map(item => item.percentage)
+            // }];
+            const data = {{ data[5]|tojson }};
+
+            const seriesData = [{
+                name: 'Male No Diabetes',
+                data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 0).map(item => item.percentage)
+            }, {
+                name: 'Female No Diabetes',
+                data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 0).map(item => item.percentage)
+            }, {
+                name: 'Male Diabetes',
+                data: data.filter(item => item.SEX === 0 && item.DIABETE3 === 1).map(item => item.percentage)
+            }, {
+                name: 'Female Diabetes',
+                data: data.filter(item => item.SEX === 1 && item.DIABETE3 === 1).map(item => item.percentage)
+            }];
+            Highcharts.chart('container7', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Percentage of Individuals by High blood pressure, Diabetes Status, and Sex'
+                    },
+                    xAxis: {
+                        categories: ['No Hypertension', 'Hypertension'],
+                        
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Percentage (%)'
+                        },
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                                fontWeight: 'bold',
+                                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                            }
+                        }
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{point.x}</b><br/>',
+                        pointFormat: '{series.name}: {point.y}%<br/>Total: {point.stackTotal}%'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    series: seriesData
+                });
+        });
+    //});
+</script>
+
+
+</body>
+</html>
